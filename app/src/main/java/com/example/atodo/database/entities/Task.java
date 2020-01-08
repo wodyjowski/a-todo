@@ -9,7 +9,7 @@ import com.example.atodo.converters.DateConverter;
 
 import java.util.Date;
 
-@Entity
+@Entity(tableName = "Tasks")
 @TypeConverters({DateConverter.class})
 public class Task {
     @PrimaryKey
