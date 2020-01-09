@@ -13,6 +13,9 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
+                <!-- Trick to dismiss intent filter warning -->
+                <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

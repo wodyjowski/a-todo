@@ -1,5 +1,6 @@
 package com.example.atodo.database.dao;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -12,15 +13,15 @@ import java.util.List;
 @Dao
 public interface TaskDao {
     @Query("SELECT * FROM Tasks ORDER BY created_date")
-    List<Task> getTaskList();
+    LiveData<List<Task>> getTaskList();
 
     @Insert
-    void createTask(Task task);
+    void insert(Task task);
 
     @Delete
-    void DeleteTask(Task task);
+    void delete(Task task);
 
     @Query("DELETE FROM Tasks")
-    void DeleteAll();
+    void deleteAll();
 
 }

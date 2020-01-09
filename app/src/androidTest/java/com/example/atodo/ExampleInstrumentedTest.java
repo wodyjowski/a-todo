@@ -2,8 +2,15 @@ package com.example.atodo;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+import androidx.room.Room;
+import androidx.room.migration.Migration;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+
+import com.example.atodo.database.AppDatabase;
+import com.example.atodo.database.entities.Task;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
