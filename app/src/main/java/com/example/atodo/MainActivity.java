@@ -1,6 +1,8 @@
 package com.example.atodo;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -12,11 +14,13 @@ import android.widget.ListView;
 
 import com.example.atodo.database.entities.Task;
 
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     // Objects
     private MainActivityVM mMainActivityVM;
+    private ArrayAdapter<String> listAdapter;
 
     // Controls
     private EditText mEditText;
@@ -28,7 +32,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         mMainActivityVM = ViewModelProviders.of(this).get(MainActivityVM.class);
-
         InitInterface();
     }
 
@@ -38,14 +41,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mEditText = findViewById(R.id.editText);
         mListView = findViewById(R.id.listView);
 
-        ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(getApplication(), R.layout.list_layout ); // , mMainActivityVM.getAllTasks().getValue().stream().map((li) -> li.name).collect(Collectors.toList()));
+        listAdapter = new ArrayAdapter<String>(getApplication(), R.layout.list_layout ); // , mMainActivityVM.getAllTasks().getValue().stream().map((li) -> li.name).collect(Collectors.toList()));
 
-        List<Task> tList =  mMainActivityVM.getAllTasks().getValue();
-        if(tList != null) {
-            for(Task t : tList) {
-                listAdapter.add(t.name);
+        mMainActivityVM.getAllTasks().observe(this, new Observer<List<Task>>() {
+            @Override
+            public void onChanged(List<Task> tasks) {
+                listAdapter.clear();
+                for(Task t : tasks) {
+                    listAdapter.add(t.name);
+                }
             }
-        }
+
+        });
 
         mListView.setAdapter(listAdapter);
     }
@@ -59,7 +66,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String inputName = mEditText.getText().toString();
         mMainActivityVM.insert(new Task(){{
                 name = inputName;
+                created_date = new Date();
             }
         });
+
+
     }
 }
