@@ -24,7 +24,7 @@ public class MainActivityVM extends AndroidViewModel {
         mAllTasks = mTaskRepository.getAllTasks();
     }
 
-    public LiveData<List<Task>> getmAllTasks() { return mAllTasks; }
+    public LiveData<List<Task>> getAllTasks() { return mAllTasks; }
 
     public void insert(Task task) { mTaskRepository.insert(task);}
 }
