@@ -10,38 +10,41 @@
     <ListView
         android:id="@+id/listView"
         android:layout_width="0dp"
-        android:layout_height="403dp"
+        android:layout_height="0dp"
         android:layout_marginTop="20dp"
+        android:layout_marginBottom="8dp"
         android:drawSelectorOnTop="false"
+        app:layout_constraintBottom_toTopOf="@+id/editText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewTitle" />
-
+        app:layout_constraintTop_toBottomOf="@+id/textViewTitle"
+        app:layout_constraintVertical_bias="0.0" />
 
     <EditText
         android:id="@+id/editText"
-        android:layout_width="195dp"
-        android:layout_height="31dp"
-        android:layout_marginStart="36dp"
-        android:layout_marginTop="40dp"
+        android:layout_width="280dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="24dp"
         android:background="@drawable/text_edit"
         android:ems="10"
         android:importantForAutofill="no"
         android:inputType="textPersonName"
         android:shadowColor="#00B43C3C"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/listView" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:text="Add"
         app:layout_constraintBottom_toBottomOf="@+id/editText"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/editText"
-        app:layout_constraintTop_toTopOf="@+id/editText" />
+        app:layout_constraintTop_toTopOf="@+id/editText"
+        app:layout_constraintVertical_bias="0.411" />
 
     <TextView
         android:id="@+id/textViewTitle"
@@ -53,19 +56,5 @@
         android:textSize="36sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="16dp"
-        android:translationZ="2dp"
-        app:backgroundTint="?attr/colorPrimary"
-        app:fabCustomSize="60dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:maxImageSize="40dp"
-        app:srcCompat="@drawable/ic_add_black_24dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
