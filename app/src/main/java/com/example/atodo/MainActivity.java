@@ -39,10 +39,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void InitInterface() {
         findViewById(R.id.button).setOnClickListener(this);
-        findViewById(R.id.fabAdd).setOnClickListener(this);
         findViewById(R.id.listView);
         mEditText = findViewById(R.id.editText);
         mListView = findViewById(R.id.listView);
+
+        // Display text if list is empty
+        mListView.setEmptyView(findViewById(R.id.emptyText));
 
         listAdapter = new ArrayAdapter<String>(getApplication(), R.layout.list_layout );
 
@@ -65,9 +67,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.button:
                 CreateTask();
-                break;
-            case R.id.fabAdd:
-                CreateNewTask();
                 break;
         }
     }
