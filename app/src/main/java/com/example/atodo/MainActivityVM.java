@@ -10,6 +10,7 @@ import com.example.atodo.database.AppDatabase;
 import com.example.atodo.database.TaskRepository;
 import com.example.atodo.database.entities.Task;
 
+import java.util.Date;
 import java.util.List;
 
 // ViewModel
@@ -27,4 +28,18 @@ public class MainActivityVM extends AndroidViewModel {
     public LiveData<List<Task>> getAllTasks() { return mAllTasks; }
 
     public void insert(Task task) { mTaskRepository.insert(task);}
+
+    public void createTask(String inputName) {
+        if(isStringEmpty(inputName)) return;
+
+        this.insert(new Task(){{
+            name = inputName;
+            created_date = new Date();
+        }
+        });
+    }
+
+    private boolean isStringEmpty(String input) {
+        return input.trim().isEmpty();
+    }
 }

@@ -82,11 +82,7 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         String inputName = mEditText.getText().toString();
-        mMainActivityVM.insert(new Task(){{
-            name = inputName;
-            created_date = new Date();
-        }
-        });
+        mMainActivityVM.createTask(inputName);
         mEditText.setText("");
 
         return false;

@@ -58,9 +58,7 @@ public class TaskAdapter extends BaseAdapter {
         convertView = LayoutInflater.from(context).inflate(R.layout.list_row, parent, false);
         Task tsk = mTaskList.get(position);
         ((TextView)convertView.findViewById(R.id.textName)).setText(tsk.name);
-        if(tsk.created_date != null){
-            ((TextView)convertView.findViewById(R.id.textDate)).setText(tsk.created_date.toString());
-        }
+        ((TextView)convertView.findViewById(R.id.textDate)).setText(tsk.getCreatedDate());
 
         return convertView;
     }
