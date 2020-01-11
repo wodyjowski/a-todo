@@ -8,21 +8,24 @@ import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import com.example.atodo.adapters.TaskAdapter;
 import com.example.atodo.database.entities.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements TextView.OnEditorActionListener {
     // Objects
     private MainActivityVM mMainActivityVM;
-    private ArrayAdapter<String> listAdapter;
+    private TaskAdapter listAdapter;
 
     // Controls
     private EditText mEditText;
@@ -38,37 +41,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void InitInterface() {
-        findViewById(R.id.button).setOnClickListener(this);
-        findViewById(R.id.listView);
+
+        // Init component objects
         mEditText = findViewById(R.id.editText);
         mListView = findViewById(R.id.listView);
+
+        // Text entered event
+        mEditText.setOnEditorActionListener(this);
 
         // Display text if list is empty
         mListView.setEmptyView(findViewById(R.id.emptyText));
 
-        listAdapter = new ArrayAdapter<String>(getApplication(), R.layout.list_layout );
+        listAdapter = new TaskAdapter(getApplication(), null);
 
-        mMainActivityVM.getAllTasks().observe(this, new Observer<List<Task>>() {
-            @Override
-            public void onChanged(List<Task> tasks) {
-                listAdapter.clear();
-                for(Task t : tasks) {
-                    listAdapter.add(t.name);
-                }
-            }
-
+        mMainActivityVM.getAllTasks().observe(this, tasks -> {
+//            listAdapter.clear();
+            listAdapter = new TaskAdapter(getApplication(), tasks);
+            mListView.setAdapter(listAdapter);
+//            for(Task t : tasks) {
+//                listAdapter.add(t);
+//            }
         });
 
         mListView.setAdapter(listAdapter);
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.button:
-                CreateTask();
-                break;
-        }
     }
 
     private void CreateNewTask() {
@@ -82,5 +77,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 created_date = new Date();
             }
         });
+    }
+
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        String inputName = mEditText.getText().toString();
+        mMainActivityVM.insert(new Task(){{
+            name = inputName;
+            created_date = new Date();
+        }
+        });
+        mEditText.setText("");
+
+        return false;
     }
 }
