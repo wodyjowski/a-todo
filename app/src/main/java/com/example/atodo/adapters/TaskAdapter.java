@@ -18,6 +18,7 @@ import com.example.atodo.EditActivity;
 import com.example.atodo.MainActivityVM;
 import com.example.atodo.R;
 import com.example.atodo.database.entities.Task;
+import com.example.atodo.helpers.DateHelper;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -86,7 +87,8 @@ public class TaskAdapter extends BaseAdapter {
         convertView.findViewById(R.id.editButton).setOnClickListener(rowListener);
 
         ((TextView)convertView.findViewById(R.id.textName)).setText(task.name);
-        ((TextView)convertView.findViewById(R.id.textDate)).setText(getCreatedDate(task, mContext));
+        String dateText = DateHelper.getDateString(task.created_date, mContext);
+        ((TextView)convertView.findViewById(R.id.textDate)).setText(dateText);
         checkBox.setChecked(task.finished);
 
         setViewBackground(convertView, position);
@@ -109,12 +111,4 @@ public class TaskAdapter extends BaseAdapter {
         }
         convertView.setBackgroundColor(color);
     }
-
-    public String getCreatedDate(Task task, Context context) {
-        // Time format 12/24 setting comes from system
-        DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(context);
-        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-        return task.created_date == null ? "" : timeFormat.format(task.created_date) + " " + dateFormat.format(task.created_date);
-    }
-
 }
