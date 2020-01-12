@@ -5,4 +5,5 @@
     <color name="colorAccent">#BE7200</color>
     <color name="background">#000000</color>
     <color name="greyBackground">#363636</color>
+    <color name="lightListBackground">#131313</color>
 </resources>
