@@ -31,13 +31,17 @@ public class TaskAdapter extends BaseAdapter implements View.OnClickListener {
     private Context mContext;
     private MainActivityVM mMainActivityVM;
 
-    public TaskAdapter(@NonNull Context context, @NonNull MainActivityVM mainActivityVM, List<Task> taskList) {
+    public TaskAdapter(Context context, @NonNull MainActivityVM mainActivityVM, List<Task> taskList) {
         this.mMainActivityVM = mainActivityVM;
         if (taskList == null) {
             taskList = new ArrayList<Task>();
         }
         mTaskList = taskList;
         this.mContext = context;
+    }
+
+    public void setmTaskList(List<Task> tList) {
+        mTaskList = tList;
     }
 
     public void clear() {

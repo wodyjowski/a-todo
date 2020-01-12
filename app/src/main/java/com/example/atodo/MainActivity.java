@@ -52,9 +52,12 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         // Display text if list is empty
         mListView.setEmptyView(findViewById(R.id.emptyText));
 
+        listAdapter = new TaskAdapter(getApplication(), mMainActivityVM, null);
+        mListView.setAdapter(listAdapter);
+
         mMainActivityVM.getAllTasks().observe(this, tasks -> {
-            listAdapter = new TaskAdapter(getApplication(), mMainActivityVM, tasks);
-            mListView.setAdapter(listAdapter);
+            listAdapter.setmTaskList(tasks);
+            listAdapter.notifyDataSetChanged();
         });
 
         mListView.setAdapter(listAdapter);
