@@ -19,6 +19,9 @@ public class Task {
     public String name;
 
     @ColumnInfo
+    public String content;
+
+    @ColumnInfo
     public Date created_date;
 
     @ColumnInfo

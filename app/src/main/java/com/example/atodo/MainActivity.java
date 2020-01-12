@@ -1,35 +1,32 @@
 package com.example.atodo;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.atodo.adapters.TaskAdapter;
+import com.example.atodo.adapters.TaskListObserver;
 import com.example.atodo.database.entities.Task;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Date;
-import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements TextView.OnEditorActionListener {
+public class MainActivity extends AppCompatActivity implements TextView.OnEditorActionListener, View.OnClickListener {
     // Objects
     private MainActivityVM mMainActivityVM;
     private TaskAdapter listAdapter;
+    private TaskListObserver listObserver;
 
     // Controls
     private EditText mEditText;
     private ListView mListView;
+    private TextView mTextViewShowFinished;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,9 +42,11 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         // Init component objects
         mEditText = findViewById(R.id.editText);
         mListView = findViewById(R.id.listView);
+        mTextViewShowFinished = findViewById(R.id.textViewShowFin);
 
         // Text entered event
         mEditText.setOnEditorActionListener(this);
+        mTextViewShowFinished.setOnClickListener(this);
 
         // Display text if list is empty
         mListView.setEmptyView(findViewById(R.id.emptyText));
@@ -55,10 +54,9 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         listAdapter = new TaskAdapter(getApplication(), mMainActivityVM, null);
         mListView.setAdapter(listAdapter);
 
-        mMainActivityVM.getAllTasks().observe(this, tasks -> {
-            listAdapter.setmTaskList(tasks);
-            listAdapter.notifyDataSetChanged();
-        });
+        listObserver = new TaskListObserver(listAdapter);
+
+        ChangeFinishedVisibility();
 
         mListView.setAdapter(listAdapter);
     }
@@ -83,5 +81,32 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         mEditText.setText("");
 
         return false;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.textViewShowFin:
+                ChangeFinishedVisibility();
+                break;
+        }
+    }
+
+    private void ChangeFinishedVisibility() {
+
+        // Change list data source on show/hide finished tasks
+        if(mMainActivityVM.isShowFinishedTasks()){
+            mMainActivityVM.getmUnfinishedTasks().removeObservers(this);
+            mMainActivityVM.setShowFinishedTasks(false);
+            mMainActivityVM.getAllTasks().observe(this, listObserver);
+            mTextViewShowFinished.setText(R.string.test_hide_finished);
+        } else {
+            mMainActivityVM.getAllTasks().removeObservers(this);
+            mMainActivityVM.setShowFinishedTasks(true);
+            mMainActivityVM.getmUnfinishedTasks().observe(this, listObserver);
+            mTextViewShowFinished.setText(R.string.test_show_finished);
+        }
+
+        listAdapter.notifyDataSetChanged();
     }
 }

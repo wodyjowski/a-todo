@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class TaskAdapter extends BaseAdapter implements View.OnClickListener {
+public class TaskAdapter extends BaseAdapter {
 
     private List<Task> mTaskList;
     private Context mContext;
@@ -76,13 +76,14 @@ public class TaskAdapter extends BaseAdapter implements View.OnClickListener {
         if(convertView == null)
         {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.list_row, parent, false);
-            // On edit click
-            convertView.findViewById(R.id.editButton).setOnClickListener(this);
         }
+
         Task task = mTaskList.get(position);
+        ListRowListener rowListener = new ListRowListener(mContext, mMainActivityVM, task);
 
         CheckBox checkBox = convertView.findViewById(R.id.checkBox);
-        checkBox.setOnCheckedChangeListener(new ListRowListener(mMainActivityVM, task, position));
+        checkBox.setOnCheckedChangeListener(rowListener);
+        convertView.findViewById(R.id.editButton).setOnClickListener(rowListener);
 
         ((TextView)convertView.findViewById(R.id.textName)).setText(task.name);
         ((TextView)convertView.findViewById(R.id.textDate)).setText(getCreatedDate(task, mContext));
@@ -114,27 +115,6 @@ public class TaskAdapter extends BaseAdapter implements View.OnClickListener {
         DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(context);
         DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
         return task.created_date == null ? "" : timeFormat.format(task.created_date) + " " + dateFormat.format(task.created_date);
-    }
-
-    private Task getTaskFromParentList(View v) {
-        View parentRow = (View) v.getParent();
-        ListView listView = (ListView) parentRow.getParent();
-        final int position = listView.getPositionForView(parentRow);
-
-        Task task = (Task)getItem(position);
-
-        return task;
-    }
-
-
-    @Override
-    public void onClick(View v) {
-        Task task = getTaskFromParentList(v);
-
-        Intent intent = new Intent(mContext, EditActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-        mContext.startActivity(intent);
     }
 
 }

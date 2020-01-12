@@ -5,4 +5,6 @@
     <string name="title_activity_edit">EditActivity</string>
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
+    <string name="test_hide_finished">Hide finished</string>
+    <string name="test_show_finished">Show finished</string>
 </resources>
