@@ -25,5 +25,8 @@ public class Task {
     public Date created_date;
 
     @ColumnInfo
+    public Date notification_date;
+
+    @ColumnInfo
     public boolean finished;
 }
