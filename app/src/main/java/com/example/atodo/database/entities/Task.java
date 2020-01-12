@@ -24,9 +24,4 @@ public class Task {
 
     @ColumnInfo
     public Date created_date;
-
-    public String getCreatedDate() {
-        DateFormat dateFormat = new SimpleDateFormat("hh:mm dd-MM-yyyy");
-        return created_date == null ? "" : dateFormat.format(created_date);
-    }
 }
