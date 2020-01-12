@@ -65,18 +65,17 @@
 
     <EditText
         android:id="@+id/editTextDate"
-        android:layout_width="0dp"
+        android:layout_width="155dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
         android:backgroundTint="@color/greyBackground"
         android:editable="false"
         android:ems="10"
         android:focusable="false"
         android:hint="--"
         android:inputType="date"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/textView3"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+        android:textIsSelectable="false"
+        app:layout_constraintStart_toStartOf="@+id/textView5"
+        app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
     <TextView
         android:id="@+id/textViewCreatedDate"
@@ -86,4 +85,37 @@
         android:textColor="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="@+id/editTextTaskName"
         app:layout_constraintTop_toTopOf="@+id/textView" />
+
+    <EditText
+        android:id="@+id/editText5"
+        android:layout_width="155dp"
+        android:layout_height="47dp"
+        android:backgroundTint="@color/greyBackground"
+        android:editable="false"
+        android:ems="10"
+        android:hint="--"
+        android:inputType="time"
+        android:textIsSelectable="false"
+        app:layout_constraintStart_toStartOf="@+id/textView6"
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Date"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="@+id/textView3"
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Time"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView5"
+        app:layout_constraintTop_toTopOf="@+id/textView5" />
 </androidx.constraintlayout.widget.ConstraintLayout>
