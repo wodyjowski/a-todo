@@ -7,11 +7,7 @@ import androidx.room.TypeConverters;
 
 import com.example.atodo.converters.DateConverter;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 
 @Entity(tableName = "Tasks")
 @TypeConverters({DateConverter.class})
@@ -24,4 +20,7 @@ public class Task {
 
     @ColumnInfo
     public Date created_date;
+
+    @ColumnInfo
+    public boolean finished;
 }

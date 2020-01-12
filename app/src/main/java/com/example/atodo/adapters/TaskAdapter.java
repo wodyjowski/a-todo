@@ -1,14 +1,21 @@
 package com.example.atodo.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
+import com.example.atodo.EditActivity;
+import com.example.atodo.MainActivityVM;
 import com.example.atodo.R;
 import com.example.atodo.database.entities.Task;
 
@@ -18,17 +25,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class TaskAdapter extends BaseAdapter {
+public class TaskAdapter extends BaseAdapter implements View.OnClickListener {
 
     private List<Task> mTaskList;
-    private Context context;
+    private Context mContext;
+    private MainActivityVM mMainActivityVM;
 
-    public TaskAdapter(Context context, List<Task> taskList) {
+    public TaskAdapter(@NonNull Context context, @NonNull MainActivityVM mainActivityVM, List<Task> taskList) {
+        this.mMainActivityVM = mainActivityVM;
         if (taskList == null) {
             taskList = new ArrayList<Task>();
         }
         mTaskList = taskList;
-        this.context = context;
+        this.mContext = context;
     }
 
     public void clear() {
@@ -60,17 +69,40 @@ public class TaskAdapter extends BaseAdapter {
             return null;
         }
 
-        convertView = LayoutInflater.from(context).inflate(R.layout.list_row, parent, false);
-        Task task = mTaskList.get(position);
-        ((TextView)convertView.findViewById(R.id.textName)).setText(task.name);
-        ((TextView)convertView.findViewById(R.id.textDate)).setText(getCreatedDate(task, context));
-
-        if(position % 2 == 1){
-            int color = ContextCompat.getColor(context, R.color.lightListBackground);
-            convertView.setBackgroundColor(color);
+        if(convertView == null)
+        {
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.list_row, parent, false);
+            // On edit click
+            convertView.findViewById(R.id.editButton).setOnClickListener(this);
         }
+        Task task = mTaskList.get(position);
+
+        CheckBox checkBox = convertView.findViewById(R.id.checkBox);
+        checkBox.setOnCheckedChangeListener(new ListRowListener(mMainActivityVM, task, position));
+
+        ((TextView)convertView.findViewById(R.id.textName)).setText(task.name);
+        ((TextView)convertView.findViewById(R.id.textDate)).setText(getCreatedDate(task, mContext));
+        checkBox.setChecked(task.finished);
+
+        setViewBackground(convertView, position);
 
         return convertView;
+    }
+
+
+    /**
+     * Changes color of even rows
+     * @param convertView view to change background
+     * @param position position in list
+     */
+    private void setViewBackground(View convertView, int position) {
+        int color = ContextCompat.getColor(mContext, R.color.background);
+
+        if(position % 2 == 1){
+            color = ContextCompat.getColor(mContext, R.color.lightListBackground);
+
+        }
+        convertView.setBackgroundColor(color);
     }
 
     public String getCreatedDate(Task task, Context context) {
@@ -79,4 +111,26 @@ public class TaskAdapter extends BaseAdapter {
         DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
         return task.created_date == null ? "" : timeFormat.format(task.created_date) + " " + dateFormat.format(task.created_date);
     }
+
+    private Task getTaskFromParentList(View v) {
+        View parentRow = (View) v.getParent();
+        ListView listView = (ListView) parentRow.getParent();
+        final int position = listView.getPositionForView(parentRow);
+
+        Task task = (Task)getItem(position);
+
+        return task;
+    }
+
+
+    @Override
+    public void onClick(View v) {
+        Task task = getTaskFromParentList(v);
+
+        Intent intent = new Intent(mContext, EditActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        mContext.startActivity(intent);
+    }
+
 }

@@ -42,4 +42,11 @@ public class MainActivityVM extends AndroidViewModel {
     private boolean isStringEmpty(String input) {
         return input.trim().isEmpty();
     }
+
+    public void updateTaskFinished(Task task, boolean finished) {
+        if(task.finished == finished) return;
+
+        task.finished = finished;
+        mTaskRepository.update(task);
+    }
 }

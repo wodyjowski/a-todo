@@ -25,4 +25,10 @@ public class TaskRepository {
             mTaskDao.insert(task);
         });
     }
+
+    public void update(Task task) {
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            mTaskDao.update(task);
+        });
+    }
 }

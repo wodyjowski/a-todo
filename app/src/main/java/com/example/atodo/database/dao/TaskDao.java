@@ -5,6 +5,7 @@ import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.example.atodo.database.entities.Task;
 
@@ -23,5 +24,8 @@ public interface TaskDao {
 
     @Query("DELETE FROM Tasks")
     void deleteAll();
+
+    @Update
+    void update(Task task);
 
 }
