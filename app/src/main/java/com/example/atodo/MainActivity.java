@@ -17,7 +17,7 @@ import com.example.atodo.database.entities.Task;
 
 import java.util.Date;
 
-public class MainActivity extends AppCompatActivity implements TextView.OnEditorActionListener, View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements TextView.OnEditorActionListener, View.OnClickListener, View.OnFocusChangeListener {
     // Objects
     private MainActivityVM mMainActivityVM;
     private TaskAdapter listAdapter;
@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
 
         // Text entered event
         mEditText.setOnEditorActionListener(this);
+        mEditText.setOnFocusChangeListener(this);
         mTextViewShowFinished.setOnClickListener(this);
 
         // Display text if list is empty
@@ -108,5 +109,17 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         }
 
         listAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        if (hasFocus){
+            mEditText.setHint("");
+            mEditText.setCursorVisible(true);
+        }
+        else{
+            mEditText.setHint(getString(R.string.new_reminder));
+            mEditText.setCursorVisible(false);
+        }
     }
 }
