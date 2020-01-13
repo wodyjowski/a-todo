@@ -46,9 +46,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginRight="2dp"
+        android:layout_marginRight="6dp"
         android:background="@drawable/round_button"
-        android:backgroundTint="@color/colorPrimaryDark"
+        android:backgroundTint="@color/background"
         android:minWidth="1dp"
         android:src="@drawable/ic_info_24dp" />
 
