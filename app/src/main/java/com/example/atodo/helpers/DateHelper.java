@@ -13,10 +13,15 @@ public class DateHelper {
 
     private DateHelper() {}
 
-    public static String getDateString(Date date, Context context) {
+    public static String getDateTimeString(Date date, Context context) {
         // Time format 12/24 setting comes from system
         DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(context);
         DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
         return date == null ? "" : timeFormat.format(date) + " " + dateFormat.format(date);
+    }
+
+    public static String getCustomDateTimeString(Date date) {
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd-MM-yyyy", Locale.getDefault());
+        return dateFormat.format(date);
     }
 }

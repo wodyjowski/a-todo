@@ -1,30 +1,23 @@
 package com.example.atodo.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
-import com.example.atodo.EditActivity;
 import com.example.atodo.MainActivityVM;
 import com.example.atodo.R;
 import com.example.atodo.database.entities.Task;
 import com.example.atodo.helpers.DateHelper;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class TaskAdapter extends BaseAdapter {
 
@@ -87,7 +80,7 @@ public class TaskAdapter extends BaseAdapter {
         convertView.findViewById(R.id.editButton).setOnClickListener(rowListener);
 
         ((TextView)convertView.findViewById(R.id.textName)).setText(task.name);
-        String dateText = DateHelper.getDateString(task.created_date, mContext);
+        String dateText = DateHelper.getDateTimeString(task.created_date, mContext);
         ((TextView)convertView.findViewById(R.id.textDate)).setText(dateText);
         checkBox.setChecked(task.finished);
 

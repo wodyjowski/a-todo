@@ -34,6 +34,5 @@ dependencies {
     annotationProcessor 'androidx.room:room-compiler:2.2.3'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
     implementation 'com.google.android.material:material:1.2.0-alpha03'
-    compile 'com.github.rustamg:file-dialogs:1.0'
-
+    implementation 'com.google.code.gson:gson:2.8.6'
 }

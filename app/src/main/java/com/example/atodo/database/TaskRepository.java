@@ -42,4 +42,10 @@ public class TaskRepository {
     public LiveData<Task> getTask(int uid) {
         return mTaskDao.loadSingle(uid);
     }
+
+    public void delete(Task task) {
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            mTaskDao.delete(task);
+        });
+    }
 }

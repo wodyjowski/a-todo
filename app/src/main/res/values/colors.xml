@@ -3,6 +3,7 @@
     <color name="colorPrimary">#FF7700</color>
     <color name="colorPrimaryDark">#DF6700</color>
     <color name="colorAccent">#BE7200</color>
+    <color name="deleteColor">#BE0303</color>
     <color name="background">#000000</color>
     <color name="greyBackground">#363636</color>
     <color name="lightListBackground">#131313</color>

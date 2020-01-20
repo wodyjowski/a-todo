@@ -30,4 +30,9 @@ public class EditActivityVM extends AndroidViewModel {
     public void updateTask(Task updatedTask) {
         mTaskRepository.update(updatedTask);
     }
+
+    public void deleteTask(Task task) {
+        mTaskRepository.delete(task);
+
+    }
 }

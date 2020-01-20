@@ -9,4 +9,10 @@
     <string name="test_show_finished">Show finished</string>
     <string name="created">Created: %1$s</string>
     <string name="new_reminder">+ New reminder</string>
+
+    <string-array name="priority_array">
+        <item>Low</item>
+        <item>Medium</item>
+        <item>High</item>
+    </string-array>
 </resources>
