@@ -5,28 +5,30 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
-import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
+import android.widget.LinearLayout;
 
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 
 import com.example.atodo.database.AppDatabase;
 import com.example.atodo.database.TaskRepository;
 import com.example.atodo.database.entities.Task;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class ReminderService extends Service {
 
-    private final TaskRepository mTaskRepository;
+    private final String CHANNEL_NAME = "Task reminders";
+
+    private TaskRepository mTaskRepository;
+    private Task nextTask;
 
     public ReminderService() {
-        mTaskRepository = new TaskRepository(AppDatabase.getDatabase(this));
     }
 
     @Override
@@ -36,48 +38,72 @@ public class ReminderService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
-        reminderNotification(null);
+        mTaskRepository = new TaskRepository(AppDatabase.getDatabase(this));
 
         ScheduledExecutorService scheduleTaskExecutor = Executors.newScheduledThreadPool(1);
 
-        // Create notification channel for API > 29
-        NotificationChannel serviceChannel = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            serviceChannel = new NotificationChannel(
-                    "Task reminders",
-                    "Foreground Service Channel",
-                    NotificationManager.IMPORTANCE_DEFAULT
-            );
-            NotificationManager manager = getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(serviceChannel);
-        }
+        notificationChanelConfig();
 
 
         // This schedule a runnable task every 2 minutes
         scheduleTaskExecutor.scheduleAtFixedRate(new Runnable() {
             public void run() {
                 Log.d("Service", "Service is working");
-                reminderNotification(null);
+
+                checkAndNotify();
             }
-        }, 0, 5, TimeUnit.SECONDS);
+        }, 0, 1, TimeUnit.SECONDS);
 
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private void reminderNotification(Task task) {
-        Notification newMessageNotification = new NotificationCompat.Builder(this, "Task reminders")
+    private void checkAndNotify() {
+        loadNextTask();
+        Log.d("Service", "Reminder checked");
+
+        Date currentDate = Calendar.getInstance().getTime();
+
+        if(nextTask != null && (currentDate.equals(nextTask.reminder_date) || currentDate.after(nextTask.reminder_date))) {
+            reminderNotification();
+            nextTask.remind = false;
+            mTaskRepository.update(nextTask);
+
+
+
+            checkAndNotify();
+        }
+    }
+
+    private void notificationChanelConfig() {
+
+        // Create notification channel for API > 29
+        NotificationChannel serviceChannel = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            serviceChannel = new NotificationChannel(
+                    CHANNEL_NAME,
+                    "Foreground Service Channel",
+                    NotificationManager.IMPORTANCE_DEFAULT
+            );
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(serviceChannel);
+        }
+    }
+
+    private void loadNextTask() {
+        nextTask = mTaskRepository.getNextTaskToRemind();
+    }
+
+    private void reminderNotification() {
+        Notification newMessageNotification = new NotificationCompat.Builder(this, CHANNEL_NAME)
                 .setSmallIcon(R.drawable.ic_info_24dp)
-                .setContentTitle("My notification")
-                .setContentText("Much longer text that cannot fit one line...")
-                .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText("Much longer text that cannot fit one line..."))
+                .setContentTitle(nextTask.name)
+                .setContentText(nextTask.content)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .build();
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(0, newMessageNotification);
-        Log.d("Service", "Notification");
+        notificationManager.notify(nextTask.uid, newMessageNotification);
+        Log.d("Service", "Notification " + nextTask.uid);
     }
 }
 

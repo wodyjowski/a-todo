@@ -33,4 +33,7 @@ public interface TaskDao {
 
     @Query("SELECT * FROM tasks WHERE uid = :uid")
     LiveData<Task> loadSingle(int uid);
+
+    @Query("SELECT * FROM tasks WHERE remind ORDER BY reminder_date LIMIT 1")
+    Task loadNextToRemind();
 }

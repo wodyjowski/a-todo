@@ -43,6 +43,11 @@ public class TaskRepository {
         return mTaskDao.loadSingle(uid);
     }
 
+    public Task getNextTaskToRemind() {
+        return mTaskDao.loadNextToRemind();
+    }
+
+
     public void delete(Task task) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             mTaskDao.delete(task);

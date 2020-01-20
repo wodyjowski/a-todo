@@ -78,12 +78,16 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
             editTextTaskContent.setText(task.content);
             checkBoxRemind.setChecked(task.remind);
 
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(task.reminder_date);
+            if(task.reminder_date != null)
+            {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(task.reminder_date);
 
-            datePicker.updateDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
-            timePicker.setHour(cal.get(Calendar.HOUR));
-            timePicker.setMinute(cal.get(Calendar.MINUTE));
+                datePicker.updateDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+                timePicker.setHour(cal.get(Calendar.HOUR));
+                timePicker.setMinute(cal.get(Calendar.MINUTE));
+            }
+
             checkBoxRemind.setChecked(task.remind);
 
             // String resource with parameter
