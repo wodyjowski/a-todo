@@ -62,8 +62,9 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
         liveTask.observe(this, task -> {
             if(task == null)
                 return;
-
             this.task = task;
+
+            spinnerPriority.setSelection(task.priority);
             editTextTaskName.setText(task.name);
             editTextTaskContent.setText(task.content);
             // String resource with parameter
@@ -76,8 +77,9 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
         Task updatedTask = liveTask.getValue();
 
         if(updatedTask != null) {
-            updatedTask.name = editTextTaskName.getText().toString();
-            updatedTask.content = editTextTaskContent.getText().toString();
+            updatedTask.name = editTextTaskName.getText().toString().trim();
+            updatedTask.content = editTextTaskContent.getText().toString().trim();
+            updatedTask.priority = spinnerPriority.getSelectedItemPosition();
             mEditActivityVM.updateTask(updatedTask);
         }
 

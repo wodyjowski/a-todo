@@ -22,6 +22,9 @@ public class Task {
     public String content;
 
     @ColumnInfo
+    public int priority;
+
+    @ColumnInfo
     public Date created_date;
 
     @ColumnInfo
