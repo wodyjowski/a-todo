@@ -92,7 +92,7 @@
             app:layout_constraintTop_toBottomOf="@+id/spinnerPriority" />
 
         <DatePicker
-            android:id="@+id/datePicker2"
+            android:id="@+id/datePicker"
             android:layout_width="0dp"
             android:layout_height="157dp"
             android:layout_marginStart="16dp"
@@ -107,7 +107,7 @@
             app:layout_constraintTop_toBottomOf="@+id/textView3"></DatePicker>
 
         <CheckBox
-            android:id="@+id/checkBox2"
+            android:id="@+id/checkBoxRemind"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="@+id/textView3"
@@ -121,10 +121,10 @@
             android:layout_height="132dp"
             android:theme="@style/CustomPickerTheme"
             android:timePickerMode="spinner"
-            app:layout_constraintEnd_toEndOf="@+id/datePicker2"
+            app:layout_constraintEnd_toEndOf="@+id/datePicker"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/datePicker2"
-            app:layout_constraintTop_toBottomOf="@+id/datePicker2"></TimePicker>
+            app:layout_constraintStart_toStartOf="@+id/datePicker"
+            app:layout_constraintTop_toBottomOf="@+id/datePicker"></TimePicker>
 
         <Button
             android:id="@+id/buttonDelete"

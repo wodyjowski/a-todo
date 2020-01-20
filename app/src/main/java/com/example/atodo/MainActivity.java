@@ -1,14 +1,13 @@
 package com.example.atodo;
 
 import android.Manifest;
-import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnLongClickListener;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -19,10 +18,6 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.example.atodo.adapters.TaskAdapter;
 import com.example.atodo.adapters.TaskListObserver;
-import com.example.atodo.database.entities.Task;
-
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 
 public class MainActivity extends AppCompatActivity implements TextView.OnEditorActionListener, View.OnClickListener, View.OnFocusChangeListener, OnLongClickListener {
 
@@ -77,6 +72,8 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
 
         mListView.setAdapter(listAdapter);
 
+        startService(new Intent(this, ReminderService.class));
+        Log.i("Service start", "Service has started");
     }
 
     @Override

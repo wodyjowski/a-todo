@@ -28,7 +28,10 @@ public class Task {
     public Date created_date;
 
     @ColumnInfo
-    public Date notification_date;
+    public Date reminder_date;
+
+    @ColumnInfo
+    public boolean remind;
 
     @ColumnInfo
     public boolean finished;
