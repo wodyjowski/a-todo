@@ -6,17 +6,19 @@ import androidx.lifecycle.ViewModelProviders;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.example.atodo.database.entities.Task;
 import com.example.atodo.helpers.DateHelper;
 
 import java.util.Calendar;
 
-public class EditActivity extends AppCompatActivity implements View.OnClickListener {
+public class EditActivity extends AppCompatActivity  {
 
     // Objects
     private EditActivityVM mEditActivityVM;
@@ -43,8 +45,8 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
         editTextTaskContent = findViewById(R.id.editTextTaskContent);
         textViewCreatedDate = findViewById(R.id.textViewCreatedDate);
 
-        editTextDate = findViewById(R.id.editTextDate);
-        editTextDate.setOnClickListener(this);
+        TimePicker timePicker = findViewById(R.id.timePicker);
+        timePicker.setIs24HourView(DateFormat.is24HourFormat(this));
 
         liveTask.observe(this, task -> {
             editTextTaskName.setText(task.name);
@@ -64,32 +66,5 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
         super.onStop();
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.editTextDate:
-                EditDateDialog();
-                break;
-        }
-    }
 
-    private void EditDateDialog() {
-        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
-
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear,
-                                  int dayOfMonth) {
-                // TODO Auto-generated method stub
-                myCalendar.set(Calendar.YEAR, year);
-                myCalendar.set(Calendar.MONTH, monthOfYear);
-                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-            }
-
-        };
-
-
-        new DatePickerDialog(this, date, myCalendar
-                .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
-    }
 }

@@ -1,10 +1,15 @@
 package com.example.atodo;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -14,7 +19,11 @@ import android.widget.TextView;
 import com.example.atodo.adapters.TaskAdapter;
 import com.example.atodo.adapters.TaskListObserver;
 import com.example.atodo.database.entities.Task;
+import com.rustamg.filedialogs.FileDialog;
+import com.rustamg.filedialogs.OpenFileDialog;
 
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity implements TextView.OnEditorActionListener, View.OnClickListener, View.OnFocusChangeListener {
@@ -60,19 +69,25 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         ChangeFinishedVisibility();
 
         mListView.setAdapter(listAdapter);
+
+//        String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+//        requestPermissions(permissions, 1);
+//
+//
+//        FileDialog dialog = new OpenFileDialog();
+//        dialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.Theme_MaterialComponents_DayNight_DarkActionBar);
+//        dialog.show(getSupportFragmentManager(), OpenFileDialog.class.getName());
     }
 
-    private void CreateNewTask() {
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-    }
-
-    private void CreateTask() {
-        String inputName = mEditText.getText().toString();
-        mMainActivityVM.insert(new Task(){{
-                name = inputName;
-                created_date = new Date();
-            }
-        });
+    private void writeToFile(String data, Context context) {
+        try {
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("config.txt", Context.MODE_PRIVATE));
+            outputStreamWriter.write(data);
+            outputStreamWriter.close();
+        }
+        catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }
     }
 
     @Override
