@@ -39,6 +39,10 @@ public class TaskRepository {
         });
     }
 
+    public void imidiateUpdate(Task task) {
+            mTaskDao.update(task);
+    }
+
     public LiveData<Task> getTask(int uid) {
         return mTaskDao.loadSingle(uid);
     }

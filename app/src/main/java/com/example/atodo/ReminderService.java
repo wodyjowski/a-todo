@@ -1,10 +1,12 @@
 package com.example.atodo;
 
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.LinearLayout;
@@ -57,18 +59,23 @@ public class ReminderService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
+
     private void checkAndNotify() {
-        loadNextTask();
+        if(nextTask == null) {
+            loadNextTask();
+        }
+
         Log.d("Service", "Reminder checked");
 
-        Date currentDate = Calendar.getInstance().getTime();
+        Date currentDate = new Date();
 
-        if(nextTask != null && (currentDate.equals(nextTask.reminder_date) || currentDate.after(nextTask.reminder_date))) {
+        if(nextTask != null && currentDate.getTime() >= nextTask.reminder_date.getTime()) {
             reminderNotification();
             nextTask.remind = false;
-            mTaskRepository.update(nextTask);
+            mTaskRepository.imidiateUpdate(nextTask);
+            nextTask = null;
 
-
+            AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
 
             checkAndNotify();
         }
