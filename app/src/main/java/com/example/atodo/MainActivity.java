@@ -8,8 +8,10 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnLongClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
     private ListView mListView;
     private TextView mTextViewShowFinished;
     private TextView textViewTitle;
+    private Spinner spinnerFilter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         mListView = findViewById(R.id.listView);
         mTextViewShowFinished = findViewById(R.id.textViewShowFin);
         textViewTitle = findViewById(R.id.textViewTitle);
+        spinnerFilter = findViewById(R.id.spinnerFilter);
 
         // Text entered event
         mEditText.setOnEditorActionListener(this);
@@ -62,6 +66,11 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
 
         // Display text if list is empty
         mListView.setEmptyView(findViewById(R.id.emptyText));
+
+        //  Spinner adapter
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.filter_array, R.layout.support_simple_spinner_dropdown_item);
+        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        spinnerFilter.setAdapter(adapter);
 
         listAdapter = new TaskAdapter(getApplication(), mMainActivityVM, null);
         mListView.setAdapter(listAdapter);

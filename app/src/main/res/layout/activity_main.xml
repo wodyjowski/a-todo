@@ -12,15 +12,15 @@
         android:id="@+id/listView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:drawSelectorOnTop="false"
         app:layout_constraintBottom_toTopOf="@+id/editLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewTitle"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/spinnerLayout">
+
+    </ListView>
 
     <TextView
         android:id="@+id/textViewTitle"
@@ -76,5 +76,41 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
     </RelativeLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/spinnerLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/greyBackground"
+        android:backgroundTint="@color/greyBackground"
+        android:minHeight="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle">
+
+        <Spinner
+            android:id="@+id/spinnerFilter"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:background="@color/greyBackground"
+            android:popupBackground="@color/greyBackground"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/textViewLabel"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textViewLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Order by"
+            app:layout_constraintBottom_toBottomOf="@+id/spinnerFilter"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/spinnerFilter"
+            app:layout_constraintVertical_bias="0.473" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
