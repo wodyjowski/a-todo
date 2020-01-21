@@ -163,18 +163,14 @@
             app:layout_constraintStart_toStartOf="@+id/buttonDelete"
             app:layout_constraintTop_toBottomOf="@+id/buttonDelete" />
 
-        <ImageView
-            android:id="@+id/imageView"
+        <com.example.atodo.helpers.ExpandableHeightGridView
+            android:numColumns="2"
+            android:id="@+id/gridView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
             app:layout_constraintEnd_toEndOf="@+id/buttonAdd"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/buttonAdd"
-            app:layout_constraintTop_toBottomOf="@+id/buttonAdd"
-            app:srcCompat="@color/background" />
+            app:layout_constraintTop_toBottomOf="@+id/buttonAdd" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

@@ -8,17 +8,20 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
 import com.example.atodo.converters.DateConverter;
+import com.example.atodo.database.dao.ImageDao;
 import com.example.atodo.database.dao.TaskDao;
+import com.example.atodo.database.entities.Image;
 import com.example.atodo.database.entities.Task;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Task.class}, version = 8, exportSchema = false)
+@Database(entities = {Task.class, Image.class}, version = 9, exportSchema = false)
 @TypeConverters({DateConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract TaskDao taskDao();
+    public abstract ImageDao imageDao();
 
 
     private static final String DB_NAME = "task_database";

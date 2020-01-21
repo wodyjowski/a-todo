@@ -23,13 +23,17 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.example.atodo.adapters.ImageAdapter;
+import com.example.atodo.database.entities.Image;
 import com.example.atodo.database.entities.Task;
 import com.example.atodo.helpers.DateHelper;
+import com.example.atodo.helpers.ExpandableHeightGridView;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -45,6 +49,7 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
     private EditActivityVM mEditActivityVM;
     private LiveData<Task> liveTask;
     private Task task;
+    private Bitmap bitmap;
 
     // Controls
     private EditText editTextTaskName;
@@ -56,8 +61,7 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
     private TimePicker timePicker;
     private CheckBox checkBoxRemind;
     private Button buttonAdd;
-    private Bitmap bitmap;
-    private ImageView imageView;
+    private ExpandableHeightGridView gridView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +82,7 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
         timePicker = findViewById(R.id.timePicker);
         checkBoxRemind = findViewById(R.id.checkBoxRemind);
         buttonAdd = findViewById(R.id.buttonAdd);
-        imageView = findViewById(R.id.imageView);
+        gridView = findViewById(R.id.gridView);
 
         // Events
         buttonDelete.setOnClickListener(this);
@@ -91,7 +95,14 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         spinnerPriority.setAdapter(adapter);
 
-        imageView.setVisibility(View.GONE);
+        ImageAdapter imgAdapter = new ImageAdapter(this, mEditActivityVM, null);
+        gridView.setAdapter(imgAdapter);
+        gridView.setExpanded(true);
+
+        mEditActivityVM.getAllImages(taskId).observe(this, images -> {
+            imgAdapter.setTaskList(images);
+        });
+
 
         liveTask.observe(this, task -> {
             if(task == null)
@@ -103,12 +114,6 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
             editTextTaskContent.setText(task.content);
             checkBoxRemind.setChecked(task.remind);
 
-            if(task.image != null) {
-                bitmap = BitmapFactory.decodeByteArray(task.image, 0, task.image.length);
-                imageView.setImageBitmap(bitmap);
-                buttonAdd.setText("Remove attachment");
-                imageView.setVisibility(View.VISIBLE);
-            }
 
             if(task.reminder_date != null)
             {
@@ -197,15 +202,8 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
                 deleteTask();
                 break;
             case R.id.buttonAdd:
-                if(bitmap == null) {
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE); //IMAGE CAPTURE CODE
-                    startActivityForResult(intent, 0);
-                } else {
-                    bitmap = null;
-                    imageView.setImageBitmap(null);
-                    buttonAdd.setText("Add attachment");
-                    imageView.setVisibility(View.GONE);
-                }
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE); //IMAGE CAPTURE CODE
+                startActivityForResult(intent, 0);
                 break;
         }
     }
@@ -216,10 +214,10 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
         if(data != null) {
             Object bitmapData = data.getExtras().get("data");
             bitmap = (Bitmap)bitmapData;
-            imageView.clearAnimation();
-            imageView.setImageBitmap(bitmap);
-            buttonAdd.setText("Remove attachment");
-            imageView.setVisibility(View.VISIBLE);
+
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            mEditActivityVM.createImage(stream.toByteArray(), task.uid);
         }
     }
 
