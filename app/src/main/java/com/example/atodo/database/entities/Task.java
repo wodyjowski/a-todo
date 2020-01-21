@@ -35,4 +35,7 @@ public class Task {
 
     @ColumnInfo
     public boolean finished;
+
+    @ColumnInfo
+    public byte[] image;
 }

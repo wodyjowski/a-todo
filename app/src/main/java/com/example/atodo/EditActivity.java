@@ -1,5 +1,6 @@
 package com.example.atodo;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProviders;
@@ -8,7 +9,13 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.provider.MediaStore;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -16,6 +23,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -23,8 +31,13 @@ import android.widget.TimePicker;
 import com.example.atodo.database.entities.Task;
 import com.example.atodo.helpers.DateHelper;
 
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+
+import static androidx.core.graphics.TypefaceCompatUtil.getTempFile;
 
 public class EditActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -42,6 +55,9 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
     private DatePicker datePicker;
     private TimePicker timePicker;
     private CheckBox checkBoxRemind;
+    private Button buttonAdd;
+    private Bitmap bitmap;
+    private ImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,9 +77,12 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
         datePicker = findViewById(R.id.datePicker);
         timePicker = findViewById(R.id.timePicker);
         checkBoxRemind = findViewById(R.id.checkBoxRemind);
+        buttonAdd = findViewById(R.id.buttonAdd);
+        imageView = findViewById(R.id.imageView);
 
         // Events
         buttonDelete.setOnClickListener(this);
+        buttonAdd.setOnClickListener(this);
 
         TimePicker timePicker = findViewById(R.id.timePicker);
         timePicker.setIs24HourView(DateFormat.is24HourFormat(this));
@@ -71,6 +90,8 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.priority_array, R.layout.support_simple_spinner_dropdown_item);
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         spinnerPriority.setAdapter(adapter);
+
+        imageView.setVisibility(View.GONE);
 
         liveTask.observe(this, task -> {
             if(task == null)
@@ -81,6 +102,13 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
             editTextTaskName.setText(task.name);
             editTextTaskContent.setText(task.content);
             checkBoxRemind.setChecked(task.remind);
+
+            if(task.image != null) {
+                bitmap = BitmapFactory.decodeByteArray(task.image, 0, task.image.length);
+                imageView.setImageBitmap(bitmap);
+                buttonAdd.setText("Remove attachment");
+                imageView.setVisibility(View.VISIBLE);
+            }
 
             if(task.reminder_date != null)
             {
@@ -99,6 +127,39 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
+    public Intent getPickImageIntent(Context context) {
+        Intent chooserIntent = null;
+
+        List<Intent> intentList = new ArrayList<>();
+
+        Intent pickIntent = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        takePhotoIntent.putExtra("return-data", true);
+        takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, getTempFile(context));
+        intentList = addIntentsToList(context, intentList, pickIntent);
+        intentList = addIntentsToList(context, intentList, takePhotoIntent);
+
+        if (intentList.size() > 0) {
+            chooserIntent = Intent.createChooser(intentList.remove(intentList.size() - 1),
+                    "Pick image");
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentList.toArray(new Parcelable[]{}));
+        }
+
+        return chooserIntent;
+    }
+
+    private List<Intent> addIntentsToList(Context context, List<Intent> list, Intent intent) {
+        List<ResolveInfo> resInfo = context.getPackageManager().queryIntentActivities(intent, 0);
+        for (ResolveInfo resolveInfo : resInfo) {
+            String packageName = resolveInfo.activityInfo.packageName;
+            Intent targetedIntent = new Intent(intent);
+            targetedIntent.setPackage(packageName);
+            list.add(targetedIntent);
+        }
+        return list;
+    }
+
     @Override
     public void onStop() {
         Task updatedTask = liveTask.getValue();
@@ -108,6 +169,14 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
             updatedTask.content = editTextTaskContent.getText().toString().trim();
             updatedTask.priority = spinnerPriority.getSelectedItemPosition();
             updatedTask.remind = checkBoxRemind.isChecked();
+
+            if(bitmap != null){
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                updatedTask.image = stream.toByteArray();
+            } else {
+                updatedTask.image = null;
+            }
 
             // Save reminder date and time
             Calendar cal = Calendar.getInstance();
@@ -127,6 +196,30 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.buttonDelete:
                 deleteTask();
                 break;
+            case R.id.buttonAdd:
+                if(bitmap == null) {
+                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE); //IMAGE CAPTURE CODE
+                    startActivityForResult(intent, 0);
+                } else {
+                    bitmap = null;
+                    imageView.setImageBitmap(null);
+                    buttonAdd.setText("Add attachment");
+                    imageView.setVisibility(View.GONE);
+                }
+                break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(data != null) {
+            Object bitmapData = data.getExtras().get("data");
+            bitmap = (Bitmap)bitmapData;
+            imageView.clearAnimation();
+            imageView.setImageBitmap(bitmap);
+            buttonAdd.setText("Remove attachment");
+            imageView.setVisibility(View.VISIBLE);
         }
     }
 
