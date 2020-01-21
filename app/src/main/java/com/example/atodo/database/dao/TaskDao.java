@@ -13,11 +13,11 @@ import java.util.List;
 
 @Dao
 public interface TaskDao {
-    @Query("SELECT * FROM Tasks ORDER BY finished, created_date DESC")
-    LiveData<List<Task>> getAllTaskList();
+    @Query("SELECT * FROM Tasks WHERE finished = 0 OR :finished ORDER BY finished, created_date DESC")
+    LiveData<List<Task>> getAllTaskList(boolean finished);
 
-    @Query("SELECT * FROM Tasks WHERE finished = 0 ORDER BY created_date DESC")
-    LiveData<List<Task>> getUnfinishedTaskList();
+    @Query("SELECT * FROM Tasks WHERE finished = 0 OR :finished ORDER BY finished, priority DESC, created_date DESC")
+    LiveData<List<Task>> getAllTaskLisByPriority(boolean finished);
 
     @Insert
     void insert(Task task);

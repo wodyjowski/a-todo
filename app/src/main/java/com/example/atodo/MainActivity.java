@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnLongClickListener;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -21,7 +22,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.example.atodo.adapters.TaskAdapter;
 import com.example.atodo.adapters.TaskListObserver;
 
-public class MainActivity extends AppCompatActivity implements TextView.OnEditorActionListener, View.OnClickListener, View.OnFocusChangeListener, OnLongClickListener {
+public class MainActivity extends AppCompatActivity implements TextView.OnEditorActionListener, View.OnClickListener, View.OnFocusChangeListener, OnLongClickListener, AdapterView.OnItemSelectedListener {
 
     // Constants
     private final int REQUEST_SAVE = 1;
@@ -71,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.filter_array, R.layout.support_simple_spinner_dropdown_item);
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         spinnerFilter.setAdapter(adapter);
+        spinnerFilter.setOnItemSelectedListener(this);
 
         listAdapter = new TaskAdapter(getApplication(), mMainActivityVM, null);
         mListView.setAdapter(listAdapter);
@@ -104,19 +106,16 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
     }
 
     private void ChangeFinishedVisibility() {
-
         // Change list data source on show/hide finished tasks
-        if (mMainActivityVM.isShowFinishedTasks()) {
-            mMainActivityVM.getmUnfinishedTasks().removeObservers(this);
-            mMainActivityVM.setShowFinishedTasks(false);
-            mMainActivityVM.getAllTasks().observe(this, listObserver);
+        if (mMainActivityVM.showFinishedTasks) {
+            mMainActivityVM.showFinishedTasks = false;
             mTextViewShowFinished.setText(R.string.test_hide_finished);
         } else {
-            mMainActivityVM.getAllTasks().removeObservers(this);
-            mMainActivityVM.setShowFinishedTasks(true);
-            mMainActivityVM.getmUnfinishedTasks().observe(this, listObserver);
+            mMainActivityVM.showFinishedTasks = true;
             mTextViewShowFinished.setText(R.string.test_show_finished);
         }
+
+        mMainActivityVM.getTasks(this).observe(this, listObserver);
 
         listAdapter.notifyDataSetChanged();
     }
@@ -149,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
     }
 
     private void saveFile() {
-        mMainActivityVM.getAllTasks().observe(this, taskList -> {
+        mMainActivityVM.getTasks(this).observe(this, taskList -> {
             mMainActivityVM.saveTaskList(taskList, getApplicationContext());
         });
     }
@@ -163,5 +162,18 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
                 saveFile();
                 break;
         }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+        mMainActivityVM.orderType = position;
+        mMainActivityVM.getTasks(this).observe(this, listObserver);
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 }

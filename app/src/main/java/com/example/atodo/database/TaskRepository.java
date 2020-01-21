@@ -10,21 +10,17 @@ import java.util.List;
 
 public class TaskRepository {
     private TaskDao mTaskDao;
-    private LiveData<List<Task>> mAllTasks;
-    private LiveData<List<Task>> mUnfinishedTasks;
 
     public TaskRepository(AppDatabase appDatabase) {
         mTaskDao = appDatabase.taskDao();
-        mAllTasks = mTaskDao.getAllTaskList();
-        mUnfinishedTasks = mTaskDao.getUnfinishedTaskList();
     }
 
-    public LiveData<List<Task>> getAllTasks(){
-        return mAllTasks;
+    public LiveData<List<Task>> getAllTasks(boolean finished){
+        return mTaskDao.getAllTaskList(finished);
     }
 
-    public LiveData<List<Task>> getUnfinishedTasks() {
-        return mUnfinishedTasks;
+    public LiveData<List<Task>> getAllTaskLisByPriority(boolean finished) {
+        return mTaskDao.getAllTaskLisByPriority(finished);
     }
 
     public void insert(final Task task){

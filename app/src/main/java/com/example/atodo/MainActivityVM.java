@@ -8,16 +8,14 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 
-import com.example.atodo.adapters.TaskListObserver;
 import com.example.atodo.database.AppDatabase;
 import com.example.atodo.database.TaskRepository;
 import com.example.atodo.database.entities.Task;
 import com.example.atodo.helpers.DateHelper;
 import com.google.gson.Gson;
-
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -27,28 +25,15 @@ import java.util.List;
 // ViewModel
 public class MainActivityVM extends AndroidViewModel {
     private TaskRepository mTaskRepository;
-    private Application application;
+    private LiveData<List<Task>> currentData;
 
-    private LiveData<List<Task>> mAllTasks;
-    private LiveData<List<Task>> mUnfinishedTasks;
-    private TaskListObserver listObserver;
 
-    private boolean showFinishedTasks = false;
+    public boolean showFinishedTasks = false;
+    public int orderType = 0;
 
     public MainActivityVM(@NonNull Application application) {
         super(application);
         mTaskRepository = new TaskRepository(AppDatabase.getDatabase(application));
-        this.application = application;
-        mAllTasks = mTaskRepository.getAllTasks();
-        mUnfinishedTasks = mTaskRepository.getUnfinishedTasks();
-    }
-
-    public LiveData<List<Task>> getAllTasks() {
-        return mAllTasks;
-    }
-
-    public LiveData<List<Task>> getmUnfinishedTasks() {
-        return mUnfinishedTasks;
     }
 
     public void insert(Task task) { mTaskRepository.insert(task);}
@@ -73,14 +58,6 @@ public class MainActivityVM extends AndroidViewModel {
         mTaskRepository.update(task);
     }
 
-    public boolean isShowFinishedTasks() {
-        return showFinishedTasks;
-    }
-
-    public void setShowFinishedTasks(boolean showFinishedTasks) {
-        this.showFinishedTasks = showFinishedTasks;
-    }
-
     public void saveTaskList(List<Task> taskList, Context context) {
 
         File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
@@ -99,4 +76,29 @@ public class MainActivityVM extends AndroidViewModel {
         }
     }
 
+    public void removeAllObservers(LifecycleOwner owner) {
+        if(currentData == null)
+            return;
+
+        currentData.removeObservers(owner);
+    }
+
+    public LiveData<List<Task>> getTasks(LifecycleOwner owner) {
+        removeAllObservers(owner);
+
+        LiveData<List<Task>> resultData = null;
+
+        switch (orderType) {
+            case 0:
+                resultData = mTaskRepository.getAllTasks(!showFinishedTasks);
+                break;
+            case 1:
+                resultData = mTaskRepository.getAllTaskLisByPriority(!showFinishedTasks);
+                break;
+        }
+
+        currentData = resultData;
+
+        return resultData;
+    }
 }
